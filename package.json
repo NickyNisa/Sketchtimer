@@ -1,0 +1,31 @@
+{
+  "name": "sketchtimer-app",
+  "version": "1.0.0",
+  "description": "SketchTimer - Timed Drawing Reference & Preset Practice App (Lab 8 - 968-362 Front-end Development)",
+  "productName": "SketchTimer",
+  "author": "Student <student@psu.ac.th>",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "serve": "quasar serve dist/spa"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.17",
+    "axios": "^1.7.9",
+    "pinia": "^3.0.0",
+    "pinia-plugin-persistedstate": "^4.2.0",
+    "quasar": "^2.18.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@quasar/app-vite": "^2.1.0",
+    "sass-embedded": "^1.83.0"
+  },
+  "engines": {
+    "node": ">= 18.0.0",
+    "npm": ">= 9.0.0"
+  }
+}

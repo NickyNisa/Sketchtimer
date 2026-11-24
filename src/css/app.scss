@@ -1,0 +1,30 @@
+// Global Application Styles
+body {
+  font-family: 'Sarabun', sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+h1, h2, h3, h4, h5, h6,
+.text-h4, .text-h5, .text-h6,
+.heading-font {
+  font-family: 'Kanit', 'Sarabun', sans-serif;
+}
+
+.studio-card {
+  border-radius: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.studio-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.flip-horizontal {
+  transform: scaleX(-1);
+}
+
+.grayscale-filter {
+  filter: grayscale(100%);
+}
