@@ -7,7 +7,7 @@
           Preset ภาพวาดของฉัน ({{ filteredPresets.length }})
         </div>
         <div class="text-body2 text-grey-7">
-          อัปโหลดรูปอ้างอิง บันทึก แก้ไข ลบ และกดเปิด Present จับเวลาได้ทันที
+          อัปโหลดรูปอ้างอิงได้หลายรูปใน 1 Preset บันทึก แก้ไข ลบ และกดเปิด Present จับเวลาได้ทันที
         </div>
       </div>
 
@@ -32,6 +32,7 @@
       </div>
     </div>
 
+    <!-- Search & Category Filter Bar -->
     <q-card flat bordered class="bg-white q-pa-md q-mb-lg" style="border-radius: 14px">
       <div class="row q-col-gutter-md items-center">
         <div class="col-12 col-sm-6">
@@ -75,6 +76,7 @@
       </div>
     </q-card>
 
+    <!-- Error Banner -->
     <q-banner
       v-if="presetStore.errorMessage"
       rounded
@@ -84,13 +86,15 @@
         <q-icon name="error" color="negative" />
       </template>
       {{ presetStore.errorMessage }}
-
     </q-banner>
+
+    <!-- Loading State -->
     <div v-if="presetStore.loading && presetStore.presets.length === 0" class="flex flex-center q-pa-xl column">
       <q-spinner-dots color="primary" size="48px" />
       <div class="text-grey-7 q-mt-sm">กำลังโหลด Preset จากเซิร์ฟเวอร์...</div>
     </div>
 
+    <!-- Empty State -->
     <q-card
       v-else-if="filteredPresets.length === 0"
       flat
@@ -115,6 +119,7 @@
       />
     </q-card>
 
+    <!-- Preset Cards Grid -->
     <div v-else class="row q-col-gutter-md">
       <div
         v-for="item in filteredPresets"
@@ -130,6 +135,7 @@
       </div>
     </div>
 
+    <!-- Create / Edit Dialog -->
     <PresetFormDialog
       v-model="dialogOpen"
       :editing-preset="editingPreset"
@@ -146,6 +152,7 @@ import { useQuasar } from 'quasar'
 import { usePresetStore } from '@/stores/preset-store'
 import { useAuthStore } from '@/stores/auth-store'
 import { CATEGORY_OPTIONS } from '@/data/builtInReferences'
+import { expandPresetsToSlides } from '@/utils/imageCompressor'
 import PresetCard from '@/components/PresetCard.vue'
 import PresetFormDialog from '@/components/PresetFormDialog.vue'
 
@@ -247,9 +254,10 @@ const confirmDelete = (preset) => {
 }
 
 const presentSingle = (preset) => {
+  const slides = expandPresetsToSlides([preset])
   presetStore.startSession({
     title: `Present: ${preset.title}`,
-    images: [preset],
+    images: slides,
     duration: Number(preset.duration) || 60,
   })
   router.push({ name: 'practice' })
@@ -257,9 +265,10 @@ const presentSingle = (preset) => {
 
 const presentAllFiltered = () => {
   if (filteredPresets.value.length === 0) return
+  const slides = expandPresetsToSlides(filteredPresets.value)
   presetStore.startSession({
-    title: `Preset ของฉัน (${filteredPresets.value.length} ภาพ)`,
-    images: filteredPresets.value,
+    title: `Preset ของฉัน (${slides.length} ภาพ)`,
+    images: slides,
     duration: Number(filteredPresets.value[0].duration) || 60,
   })
   router.push({ name: 'practice' })

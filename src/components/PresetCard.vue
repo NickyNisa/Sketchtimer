@@ -2,7 +2,7 @@
   <q-card bordered flat class="studio-card column full-height bg-white">
     <div class="relative-position bg-grey-2" style="height: 200px; overflow: hidden">
       <q-img
-        :src="preset.imageUrl"
+        :src="coverImage"
         :alt="preset.title"
         fit="contain"
         class="full-height full-width"
@@ -30,6 +30,15 @@
         <q-icon name="timer" size="14px" class="q-mr-xs" />
         {{ formatDuration(preset.duration) }}
       </q-badge>
+
+      <q-badge
+        v-if="imageList.length > 1"
+        color="primary"
+        class="absolute-bottom-right q-ma-sm q-pa-xs"
+      >
+        <q-icon name="collections" size="14px" class="q-mr-xs" />
+        {{ imageList.length }} รูป
+      </q-badge>
     </div>
 
     <q-card-section class="col">
@@ -49,7 +58,7 @@
         dense
         color="secondary"
         icon="play_arrow"
-        label="Present"
+        :label="imageList.length > 1 ? `Present (${imageList.length})` : 'Present'"
         no-caps
         class="q-px-sm"
         @click="$emit('present', preset)"
@@ -83,6 +92,7 @@
 <script setup>
 import { computed } from 'vue'
 import { CATEGORY_OPTIONS } from '@/data/builtInReferences'
+import { parsePresetImages } from '@/utils/imageCompressor'
 
 const props = defineProps({
   preset: {
@@ -92,6 +102,9 @@ const props = defineProps({
 })
 
 defineEmits(['present', 'edit', 'delete'])
+
+const imageList = computed(() => parsePresetImages(props.preset))
+const coverImage = computed(() => imageList.value[0] || '')
 
 const categoryMeta = computed(() => {
   return (

@@ -79,7 +79,7 @@
         <q-card bordered flat class="studio-card column full-height bg-white">
           <q-img :src="BUILTIN_GEOMETRY[0].imageUrl" height="170px" fit="contain" class="bg-grey-2" />
           <q-card-section class="col">
-            <q-badge color="primary" label="4 แบบพื้นฐาน" class="q-mb-xs" />
+            <q-badge color="primary" :label="`${BUILTIN_GEOMETRY.length} แบบพื้นฐาน`" class="q-mb-xs" />
             <div class="text-h6 heading-font">รูปทรงเรขาคณิต</div>
             <div class="text-body2 text-grey-7 q-mt-xs">
               ฝึกวาดทรงกลม ลูกบาศก์ ทรงกระบอก ทรงกรวย และพีระมิด เพื่อเข้าใจโครงสร้างและแสงเงา
@@ -104,7 +104,7 @@
         <q-card bordered flat class="studio-card column full-height bg-white">
           <q-img :src="BUILTIN_POSES[0].imageUrl" height="170px" fit="contain" class="bg-grey-2" />
           <q-card-section class="col">
-            <q-badge color="secondary" label="4 ท่าทางพื้นฐาน" class="q-mb-xs" />
+            <q-badge color="secondary" :label="`${BUILTIN_POSES.length} ท่าทางพื้นฐาน`" class="q-mb-xs" />
             <div class="text-h6 heading-font">ท่าทาง (Pose & Gesture)</div>
             <div class="text-body2 text-grey-7 q-mt-xs">
               ฝึกจับเส้นเคลื่อนไหว (Line of Action) ท่ายืน วิ่ง นั่ง และกระโดด เหมาะกับโหมด 30 วินาที
@@ -124,19 +124,20 @@
         </q-card>
       </div>
 
+      <!-- Custom Presets -->
       <div class="col-12 col-md-4">
         <q-card bordered flat class="studio-card column full-height bg-white">
           <div class="bg-orange-1 flex flex-center column" style="height: 170px">
             <q-icon name="add_photo_alternate" size="64px" color="accent" />
             <div class="text-caption text-orange-10 q-mt-xs">
-              {{ authStore.isAuthenticated ? `บันทึกไว้แล้ว ${presetStore.totalPresets} ภาพ` : 'เฉพาะสมาชิกที่เข้าสู่ระบบ' }}
+              {{ authStore.isAuthenticated ? `บันทึกไว้แล้ว ${presetStore.totalPresets} Preset` : 'เฉพาะสมาชิกที่เข้าสู่ระบบ' }}
             </div>
           </div>
           <q-card-section class="col">
             <q-badge color="accent" text-color="dark" label="Custom Preset" class="q-mb-xs" />
             <div class="text-h6 heading-font">รูปอัปโหลดของฉัน</div>
             <div class="text-body2 text-grey-7 q-mt-xs">
-              อัปโหลดรูปอ้างอิงของคุณเอง บันทึกลง Cloud API แก้ไข ลบ และเปิดฝึกวาดแบบ Present ได้ทุกเมื่อ
+              อัปโหลดรูปอ้างอิงของคุณเองได้หลายรูปต่อ Preset บันทึกลง Cloud API แก้ไข ลบ และเปิด Present ได้ทุกเมื่อ
             </div>
           </q-card-section>
           <q-card-actions class="q-pa-md q-pt-none">
@@ -168,6 +169,7 @@ import {
   BUILTIN_POSES,
   TIMER_OPTIONS,
 } from '@/data/builtInReferences'
+import { expandPresetsToSlides } from '@/utils/imageCompressor'
 
 const router = useRouter()
 const $q = useQuasar()
@@ -178,8 +180,8 @@ const selectedMode = ref('geometry')
 const selectedDuration = ref(60)
 
 const modeOptions = [
-  { label: 'รูปทรงเรขาคณิต (4 ภาพ)', value: 'geometry' },
-  { label: 'ท่าทาง Pose / Gesture (4 ภาพ)', value: 'pose' },
+  { label: `รูปทรงเรขาคณิต (${BUILTIN_GEOMETRY.length} ภาพ)`, value: 'geometry' },
+  { label: `ท่าทาง Pose / Gesture (${BUILTIN_POSES.length} ภาพ)`, value: 'pose' },
   { label: 'Preset ที่ฉันอัปโหลดไว้ (ต้อง Login)', value: 'custom' },
 ]
 
@@ -222,9 +224,10 @@ const launchPractice = async () => {
       router.push({ name: 'presets' })
       return
     }
+    const slides = expandPresetsToSlides(presetStore.presets)
     presetStore.startSession({
-      title: 'Preset ของฉัน (Present Mode)',
-      images: presetStore.presets,
+      title: `Preset ของฉัน (${slides.length} ภาพ)`,
+      images: slides,
       duration: selectedDuration.value,
     })
     router.push({ name: 'practice' })

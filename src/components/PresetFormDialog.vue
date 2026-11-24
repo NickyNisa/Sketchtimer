@@ -1,6 +1,6 @@
 <template>
   <q-dialog :model-value="modelValue" persistent @update:model-value="$emit('update:modelValue', $event)">
-    <q-card style="width: 100%; max-width: 540px; border-radius: 16px">
+    <q-card style="width: 100%; max-width: 580px; border-radius: 16px">
       <q-card-section class="row items-center justify-between bg-primary text-white">
         <div class="text-h6 heading-font">
           <q-icon :name="isEditMode ? 'edit' : 'add_photo_alternate'" class="q-mr-sm" />
@@ -9,14 +9,14 @@
         <q-btn flat round dense icon="close" v-close-popup />
       </q-card-section>
 
-      <q-card-section class="q-pt-md">
+      <q-card-section class="q-pt-md scroll" style="max-height: 75vh">
         <q-form ref="formRef" class="q-gutter-md">
           <q-input
             v-model="form.title"
             outlined
             dense
-            label="ชื่อ Preset / ชื่อแบบวาด *"
-            placeholder="เช่น ท่ากระโดดแอคชั่น, แจกันทรงกระบอก"
+            label="ชื่อ Preset / ชื่อชุดแบบวาด *"
+            placeholder="เช่น ชุดฝึกวาดรูปปั้น 5 ท่า, รวมรูปทรงเรขาคณิต"
             :rules="[(val) => (val && val.trim().length > 0) || 'กรุณากรอกชื่อ Preset']"
           />
 
@@ -45,6 +45,7 @@
             </div>
           </div>
 
+          <!-- เลือกวิธีเพิ่มรูป: อัปโหลดหลายรูปจากเครื่อง หรือ วาง URL ทีละรูป -->
           <div>
             <q-btn-toggle
               v-model="imageMode"
@@ -56,50 +57,102 @@
               text-color="dark"
               class="q-mb-sm"
               :options="[
-                { label: 'อัปโหลดรูปจากเครื่อง', value: 'upload', icon: 'upload_file' },
+                { label: 'อัปโหลดรูปจากเครื่อง (เลือกหลายรูปได้)', value: 'upload', icon: 'upload_file' },
                 { label: 'วางลิงก์รูป (URL)', value: 'url', icon: 'link' },
               ]"
             />
 
             <div v-if="imageMode === 'upload'">
               <q-file
-                v-model="selectedFile"
+                v-model="selectedFiles"
                 outlined
                 dense
+                multiple
                 accept="image/*"
-                label="เลือกไฟล์รูปภาพ (.jpg, .png, .webp)"
-                hint="ระบบจะย่อขนาดภาพอัตโนมัติเพื่อให้บันทึกลง MockAPI ได้รวดเร็ว"
-                @update:model-value="handleFileSelected"
+                label="เลือกไฟล์รูปภาพได้พร้อมกันหลายรูป (.jpg, .png, .webp)"
+                hint="แนะนำไม่เกิน 6-8 รูปต่อ Preset (ระบบย่อขนาดให้อัตโนมัติเพื่อให้บันทึกลง MockAPI ได้)"
+                @update:model-value="handleFilesSelected"
               >
                 <template #prepend>
-                  <q-icon name="image" color="primary" />
+                  <q-icon name="collections" color="primary" />
                 </template>
               </q-file>
             </div>
 
-            <div v-else>
-              <q-input
-                v-model="form.imageUrl"
-                outlined
-                dense
-                label="URL รูปภาพ *"
-                placeholder="https://example.com/reference.jpg"
-                :rules="[(val) => Boolean(val && val.trim()) || 'กรุณาระบุรูปภาพ']"
-              >
-                <template #prepend>
-                  <q-icon name="link" color="primary" />
-                </template>
-              </q-input>
+            <div v-else class="row q-col-gutter-xs items-start">
+              <div class="col">
+                <q-input
+                  v-model="urlInput"
+                  outlined
+                  dense
+                  label="URL รูปภาพ"
+                  placeholder="https://example.com/reference.jpg"
+                  @keyup.enter.prevent="addImageUrl"
+                >
+                  <template #prepend>
+                    <q-icon name="link" color="primary" />
+                  </template>
+                </q-input>
+              </div>
+              <div class="col-auto">
+                <q-btn
+                  unelevated
+                  color="secondary"
+                  icon="add"
+                  label="เพิ่มรูป"
+                  no-caps
+                  style="height: 40px"
+                  @click="addImageUrl"
+                />
+              </div>
             </div>
           </div>
 
-          <div v-if="form.imageUrl" class="bg-grey-2 rounded-borders q-pa-sm text-center">
-            <div class="text-caption text-grey-7 q-mb-xs">ตัวอย่างรูปภาพ</div>
-            <q-img
-              :src="form.imageUrl"
-              fit="contain"
-              style="max-height: 180px; border-radius: 8px"
-            />
+          <!-- แกลเลอรีรูปทั้งหมดใน Preset นี้ -->
+          <div v-if="form.images.length > 0" class="bg-grey-2 rounded-borders q-pa-sm">
+            <div class="row items-center justify-between q-mb-sm">
+              <div class="text-caption text-weight-bold text-grey-8">
+                รูปภาพใน Preset นี้ ({{ form.images.length }} รูป)
+              </div>
+              <q-btn
+                flat
+                dense
+                size="xs"
+                color="negative"
+                icon="delete_sweep"
+                label="ล้างรูปทั้งหมด"
+                no-caps
+                @click="form.images = []"
+              />
+            </div>
+
+            <div class="row q-col-gutter-sm">
+              <div
+                v-for="(img, index) in form.images"
+                :key="index"
+                class="col-4 col-sm-3"
+              >
+                <div class="relative-position bg-white rounded-borders overflow-hidden shadow-1" style="height: 92px">
+                  <q-img :src="img" fit="cover" class="full-height full-width" />
+                  <q-badge
+                    color="dark"
+                    class="absolute-bottom-left q-ma-xs"
+                    style="opacity: 0.85"
+                  >
+                    {{ index + 1 }}
+                  </q-badge>
+                  <q-btn
+                    round
+                    dense
+                    size="xs"
+                    color="negative"
+                    icon="close"
+                    class="absolute-top-right q-ma-xs"
+                    @click="removeImage(index)"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           <q-input
@@ -136,7 +189,11 @@
 import { ref, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { CATEGORY_OPTIONS, TIMER_OPTIONS } from '@/data/builtInReferences'
-import { compressImageFile } from '@/utils/imageCompressor'
+import {
+  compressImageFile,
+  parsePresetImages,
+  serializePresetImages,
+} from '@/utils/imageCompressor'
 
 const props = defineProps({
   modelValue: {
@@ -158,13 +215,14 @@ const emit = defineEmits(['update:modelValue', 'save'])
 const $q = useQuasar()
 const formRef = ref(null)
 const imageMode = ref('upload')
-const selectedFile = ref(null)
+const selectedFiles = ref(null)
+const urlInput = ref('')
 
 const form = ref({
   title: '',
   category: 'custom',
   duration: 60,
-  imageUrl: '',
+  images: [],
   notes: '',
 })
 
@@ -181,22 +239,23 @@ const timerSelectOptions = TIMER_OPTIONS.map((t) => ({
 }))
 
 const resetForm = async () => {
-  selectedFile.value = null
+  selectedFiles.value = null
+  urlInput.value = ''
   if (props.editingPreset) {
     form.value = {
       title: props.editingPreset.title || '',
       category: props.editingPreset.category || 'custom',
       duration: Number(props.editingPreset.duration) || 60,
-      imageUrl: props.editingPreset.imageUrl || '',
+      images: parsePresetImages(props.editingPreset),
       notes: props.editingPreset.notes || '',
     }
-    imageMode.value = props.editingPreset.imageUrl?.startsWith('data:') ? 'upload' : 'url'
+    imageMode.value = 'upload'
   } else {
     form.value = {
       title: '',
       category: 'custom',
       duration: 60,
-      imageUrl: '',
+      images: [],
       notes: '',
     }
     imageMode.value = 'upload'
@@ -214,11 +273,15 @@ watch(
   }
 )
 
-const handleFileSelected = async (file) => {
-  if (!file) return
+const handleFilesSelected = async (files) => {
+  if (!files || files.length === 0) return
+  const fileArray = Array.isArray(files) ? files : [files]
   try {
-    const compressedDataUrl = await compressImageFile(file, 640, 0.72)
-    form.value.imageUrl = compressedDataUrl
+    for (const file of fileArray) {
+      const compressedDataUrl = await compressImageFile(file, 480, 0.65)
+      form.value.images.push(compressedDataUrl)
+    }
+    selectedFiles.value = null
   } catch (error) {
     $q.notify({
       type: 'negative',
@@ -227,14 +290,25 @@ const handleFileSelected = async (file) => {
   }
 }
 
+const addImageUrl = () => {
+  const trimmed = (urlInput.value || '').trim()
+  if (!trimmed) return
+  form.value.images.push(trimmed)
+  urlInput.value = ''
+}
+
+const removeImage = (index) => {
+  form.value.images.splice(index, 1)
+}
+
 const onSubmit = async () => {
   const valid = await formRef.value.validate()
   if (!valid) return
 
-  if (!form.value.imageUrl) {
+  if (form.value.images.length === 0) {
     $q.notify({
       type: 'warning',
-      message: 'กรุณาอัปโหลดรูปภาพหรือระบุ URL รูปภาพก่อนบันทึก',
+      message: 'กรุณาเพิ่มรูปภาพอย่างน้อย 1 รูปก่อนบันทึก',
     })
     return
   }
@@ -245,7 +319,7 @@ const onSubmit = async () => {
       title: form.value.title.trim(),
       category: form.value.category,
       duration: Number(form.value.duration),
-      imageUrl: form.value.imageUrl,
+      imageUrl: serializePresetImages(form.value.images),
       notes: form.value.notes.trim(),
     },
   })
