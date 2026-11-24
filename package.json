@@ -1,7 +1,7 @@
 {
   "name": "sketchtimer-app",
   "version": "1.0.0",
-  "description": "SketchTimer - Timed Drawing Reference & Preset Practice App (Lab 8 - 968-362 Front-end Development)",
+  "description": "เว็บฝึกวาดภาพตามแบบพร้อมจับเวลา 30 วิ / 1 นาที / 5 นาที และสร้าง Preset ของตัวเองได้",
   "productName": "SketchTimer",
   "author": "Student <student@psu.ac.th>",
   "private": true,
