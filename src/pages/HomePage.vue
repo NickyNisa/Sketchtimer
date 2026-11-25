@@ -66,12 +66,10 @@
       </div>
     </q-card>
 
-    <!-- Category Showcase Cards -->
     <div class="text-h6 text-weight-bold heading-font q-mb-md">
       เลือกโหมดการฝึกวาด
     </div>
     <div class="row q-col-gutter-md q-mb-lg">
-      <!-- Geometry -->
       <div class="col-12 col-md-4">
         <q-card bordered flat class="studio-card column full-height bg-white">
           <q-img :src="BUILTIN_GEOMETRY[0].imageUrl" height="170px" fit="contain" class="bg-grey-2" />
@@ -96,7 +94,6 @@
         </q-card>
       </div>
 
-      <!-- Pose -->
       <div class="col-12 col-md-4">
         <q-card bordered flat class="studio-card column full-height bg-white">
           <q-img :src="BUILTIN_POSES[0].imageUrl" height="170px" fit="contain" class="bg-grey-2" />
@@ -121,7 +118,6 @@
         </q-card>
       </div>
 
-      <!-- Custom Presets -->
       <div class="col-12 col-md-4">
         <q-card bordered flat class="studio-card column full-height bg-white">
           <div class="bg-orange-1 flex flex-center column" style="height: 170px">
@@ -134,7 +130,7 @@
             <q-badge color="accent" text-color="dark" label="Custom Preset" class="q-mb-xs" />
             <div class="text-h6 heading-font">รูปอัปโหลดของฉัน</div>
             <div class="text-body2 text-grey-7 q-mt-xs">
-              อัปโหลดรูปอ้างอิงของคุณเองได้หลายรูปต่อ Preset บันทึกลง Cloud API แก้ไข ลบ และเปิด Present ได้ทุกเมื่อ
+              อัปโหลดรูปอ้างอิงของคุณเองได้หลายรูปต่อ Preset บันทึกลง Cloud API แก้ไข ลบ และเปิด Present ได้ทุกเมื่อ (แนะนำใช้การอัปโหลด url ทำให้รูปยังคงชัดอยู่)
             </div>
           </q-card-section>
           <q-card-actions class="q-pa-md q-pt-none">
