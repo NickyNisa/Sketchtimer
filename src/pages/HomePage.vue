@@ -4,9 +4,6 @@
     <q-card flat bordered class="bg-white q-pa-lg q-mb-lg" style="border-radius: 18px">
       <div class="row items-center q-col-gutter-lg">
         <div class="col-12 col-md-7">
-          <q-badge color="secondary" class="q-pa-xs q-mb-sm">
-            968-362 Front-end Development • Lab 8
-          </q-badge>
           <div class="text-h4 text-weight-bold text-dark heading-font">
             ฝึกวาดภาพตามแบบ พร้อมจับเวลาอัตโนมัติ
           </div>
