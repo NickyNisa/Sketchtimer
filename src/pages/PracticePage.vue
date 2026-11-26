@@ -1,66 +1,71 @@
 <template>
   <q-page class="q-pa-sm q-pa-md-md bg-grey-10 text-white column" style="min-height: calc(100vh - 50px)">
-    <div class="row items-center justify-between q-col-gutter-xs q-mb-sm">
-      <div class="col-12 col-md-4 row items-center no-wrap">
-        <q-btn flat round dense icon="arrow_back" color="white" @click="router.push({ name: 'home' })" />
-        <div class="q-ml-xs ellipsis">
-          <div class="text-subtitle2 text-weight-bold heading-font ellipsis">
-            {{ presetStore.sessionTitle }}
+    <div
+      class="q-mb-sm"
+      style="max-width: 900px; width: 100%; margin: 0 auto"
+    >
+      <div class="row items-center justify-between no-wrap q-mb-sm">
+        <div class="row items-center no-wrap" style="min-width: 0">
+          <q-btn flat round dense icon="arrow_back" color="white" @click="router.push({ name: 'home' })" />
+          <div class="q-ml-xs ellipsis">
+            <div class="text-subtitle2 text-weight-bold heading-font ellipsis">
+              {{ presetStore.sessionTitle }}
+            </div>
+            <div class="text-caption text-grey-4 ellipsis">
+              ภาพที่ {{ currentIndex + 1 }} / {{ queue.length }}
+              <span v-if="currentItem?.title">• {{ currentItem.title }}</span>
+            </div>
           </div>
-          <div class="text-caption text-grey-4 ellipsis">
-            ภาพที่ {{ currentIndex + 1 }} / {{ queue.length }}
-            <span v-if="currentItem?.title">• {{ currentItem.title }}</span>
-          </div>
+        </div>
+
+        <div class="row no-wrap items-center q-gutter-xs">
+          <q-btn
+            flat
+            round
+            dense
+            :color="isFlipped ? 'accent' : 'grey-4'"
+            icon="flip"
+            @click="isFlipped = !isFlipped"
+          >
+            <q-tooltip>กลับภาพซ้าย-ขวา (Flip)</q-tooltip>
+          </q-btn>
+          <q-btn
+            flat
+            round
+            dense
+            :color="isGrayscale ? 'accent' : 'grey-4'"
+            icon="contrast"
+            @click="isGrayscale = !isGrayscale"
+          >
+            <q-tooltip>โหมดขาวดำ</q-tooltip>
+          </q-btn>
+          <q-btn
+            flat
+            round
+            dense
+            :color="showGrid ? 'accent' : 'grey-4'"
+            icon="grid_on"
+            @click="showGrid = !showGrid"
+          >
+            <q-tooltip>ตาราง 3x3</q-tooltip>
+          </q-btn>
         </div>
       </div>
 
-      <div class="col-7 col-md-4 row justify-start justify-md-center q-gutter-xs">
-        <q-btn
-          v-for="t in TIMER_OPTIONS"
-          :key="t.value"
-          :dense="$q.screen.lt.sm"
-          :size="$q.screen.lt.sm ? 'sm' : 'md'"
-          no-caps
-          :unelevated="duration === t.value"
-          :outline="duration !== t.value"
-          :color="duration === t.value ? 'secondary' : 'grey-5'"
-          :label="t.shortLabel"
-          class="q-px-sm q-px-md-md"
-          @click="changeDuration(t.value)"
-        />
-      </div>
-
-      <div class="col-5 col-md-4 row justify-end q-gutter-xs">
-        <q-btn
-          flat
-          round
-          dense
-          :color="isFlipped ? 'accent' : 'grey-4'"
-          icon="flip"
-          @click="isFlipped = !isFlipped"
-        >
-          <q-tooltip>กลับภาพซ้าย-ขวา (Flip)</q-tooltip>
-        </q-btn>
-        <q-btn
-          flat
-          round
-          dense
-          :color="isGrayscale ? 'accent' : 'grey-4'"
-          icon="contrast"
-          @click="isGrayscale = !isGrayscale"
-        >
-          <q-tooltip>โหมดขาวดำ</q-tooltip>
-        </q-btn>
-        <q-btn
-          flat
-          round
-          dense
-          :color="showGrid ? 'accent' : 'grey-4'"
-          icon="grid_on"
-          @click="showGrid = !showGrid"
-        >
-          <q-tooltip>ตาราง 3x3</q-tooltip>
-        </q-btn>
+      <div class="row q-col-gutter-sm justify-center">
+        <div v-for="t in TIMER_OPTIONS" :key="t.value" class="col-4">
+          <q-btn
+            :dense="$q.screen.lt.sm"
+            :size="$q.screen.lt.sm ? 'sm' : 'md'"
+            no-caps
+            :unelevated="duration === t.value"
+            :outline="duration !== t.value"
+            :color="duration === t.value ? 'secondary' : 'grey-5'"
+            :label="t.shortLabel"
+            class="full-width"
+            @click="changeDuration(t.value)"
+          />
+        </div>
       </div>
     </div>
 
