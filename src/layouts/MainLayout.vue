@@ -1,22 +1,30 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
+      <q-toolbar class="q-px-sm q-px-md-md">
         <q-btn
           flat
           dense
           round
           icon="menu"
           aria-label="Menu"
-          class="lt-md"
+          class="lt-md q-mr-xs"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
-        <q-toolbar-title class="row items-center cursor-pointer" @click="router.push({ name: 'home' })">
-          <q-icon name="brush" size="26px" class="q-mr-sm" />
-          <span class="heading-font text-weight-bold">{{ appTitle }}</span>
+        <q-toolbar-title
+          class="row items-center no-wrap cursor-pointer"
+          style="min-width: 0"
+          @click="router.push({ name: 'home' })"
+        >
+          <q-icon name="brush" size="22px" class="q-mr-xs shrink-0" />
+          <span
+            class="heading-font text-weight-bold ellipsis"
+            :class="$q.screen.lt.sm ? 'text-subtitle1' : 'text-h6'"
+          >
+            {{ $q.screen.lt.sm ? shortTitle : appTitle }}
+          </span>
         </q-toolbar-title>
-
         <div class="gt-sm row items-center q-gutter-xs q-mr-md">
           <q-btn
             flat
@@ -41,8 +49,7 @@
           />
         </div>
 
-
-        <div v-if="authStore.isAuthenticated" class="row items-center q-gutter-sm">
+        <div v-if="authStore.isAuthenticated" class="row items-center no-wrap q-gutter-xs">
           <q-chip
             color="white"
             text-color="primary"
@@ -54,23 +61,30 @@
           </q-chip>
           <q-btn
             unelevated
+            dense
             size="sm"
             color="negative"
             icon="logout"
-            label="ออกจากระบบ"
+            :label="$q.screen.gt.xs ? 'ออกจากระบบ' : ''"
+            :round="$q.screen.xs"
             no-caps
+            class="q-px-xs q-px-sm-sm"
             @click="onLogout"
-          />
+          >
+            <q-tooltip>ออกจากระบบ</q-tooltip>
+          </q-btn>
         </div>
         <div v-else>
           <q-btn
             unelevated
+            dense
             size="sm"
             color="white"
             text-color="primary"
             icon="login"
-            label="เข้าสู่ระบบ"
+            :label="$q.screen.gt.xs ? 'เข้าสู่ระบบ' : 'Login'"
             no-caps
+            class="q-px-sm"
             :to="{ name: 'login' }"
           />
         </div>
@@ -132,6 +146,7 @@ const authStore = useAuthStore()
 
 const leftDrawerOpen = ref(false)
 const appTitle = import.meta.env.QCLI_APP_TITLE || 'SketchTimer'
+const shortTitle = appTitle.split('-')[0].trim() || 'SketchTimer'
 
 const onLogout = () => {
   $q.dialog({
