@@ -45,7 +45,6 @@
             </div>
           </div>
 
-          <!-- เลือกวิธีเพิ่มรูป: อัปโหลดหลายรูปจากเครื่อง หรือ วาง URL ทีละรูป -->
           <div>
             <q-btn-toggle
               v-model="imageMode"
@@ -108,7 +107,6 @@
             </div>
           </div>
 
-          <!-- แกลเลอรีรูปทั้งหมดใน Preset นี้ -->
           <div v-if="form.images.length > 0" class="bg-grey-2 rounded-borders q-pa-sm">
             <div class="row items-center justify-between q-mb-sm">
               <div class="text-caption text-weight-bold text-grey-8">
