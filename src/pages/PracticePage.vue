@@ -18,8 +18,8 @@
         <q-btn
           v-for="t in TIMER_OPTIONS"
           :key="t.value"
-          dense
-          size="sm"
+          :dense="$q.screen.lt.sm"
+          :size="$q.screen.lt.sm ? 'sm' : 'md'"
           no-caps
           :unelevated="duration === t.value"
           :outline="duration !== t.value"
